@@ -158,45 +158,106 @@ button:focus-visible {
   background-color: #f5f5f5;
 }
 
-.login-container {
+/* Estilos unificados para login y registro */
+.login-container,
+.register-container {
   max-width: 400px;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 2.5rem;
   border: 1px solid #ddd;
   border-radius: 8px;
+  background-color: white;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
+.login-container h2,
+.register-container h2 {
+  text-align: center;
   color: #2c3e50;
-  font-weight: 500;
+  margin-bottom: 2rem;
 }
 
-.form-group input {
+.login-container .form-group,
+.register-container .form-group {
+  margin-bottom: 1.5rem;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-container input,
+.register-container input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  padding: 0.8rem;
+  border: 1px solid #2c3e50;
   border-radius: 4px;
-  color: #2c3e50;
+  font-size: 1rem;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  transition: all 0.3s ease;
 }
 
-button {
+.login-container input:focus,
+.register-container input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  background-color: #34495e;
+}
+
+.login-container input::placeholder,
+.register-container input::placeholder {
+  color: #bdc3c7;
+  opacity: 0.7;
+}
+
+.login-container input:-webkit-autofill,
+.register-container input:-webkit-autofill {
+  -webkit-text-fill-color: #ecf0f1;
+  -webkit-box-shadow: 0 0 0px 1000px #2c3e50 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.login-container label,
+.register-container label {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.login-container button,
+.register-container button {
+  max-width: 200px;
+  display: block;
+  margin: 2rem auto 0;
+  padding: 0.8rem 2rem;
   background-color: #2c3e50;
   color: white;
-  padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.error-message {
+.login-container button:hover,
+.register-container button:hover {
+  background-color: #34495e;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.login-container .error-message,
+.register-container .error-message {
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.5rem;
+  background-color: #ffebee;
   color: #c62828;
-  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 4px;
+  text-align: center;
 }
 
 /* Estilos para las cards */
@@ -297,15 +358,37 @@ button {
 .register-container input {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ddd;
+  border: 1px solid #2c3e50;
   border-radius: 4px;
   font-size: 1rem;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  transition: all 0.3s ease;
 }
 
 .register-container input:focus {
   border-color: #3498db;
   outline: none;
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  background-color: #34495e;
+}
+
+.register-container input::placeholder {
+  color: #bdc3c7;
+  opacity: 0.7;
+}
+
+.register-container input:-webkit-autofill {
+  -webkit-text-fill-color: #ecf0f1;
+  -webkit-box-shadow: 0 0 0px 1000px #2c3e50 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.register-container label {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .register-container button {
@@ -398,20 +481,36 @@ button {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 4rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 10px;
 }
 
 .cta-section h2 {
   font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #2c3e50;
 }
 
 .cta-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
   margin-top: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .cta-button {
-  padding: 1.2rem 3rem;
+  padding: 1rem 2rem;
   font-size: 1.1rem;
-  min-width: 200px;
+  min-width: 160px;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .cta-button:first-child {
@@ -448,12 +547,12 @@ button {
 
   .cta-buttons {
     flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
 
   .cta-button {
-    width: 100%;
-    margin-bottom: 1rem;
-    min-width: auto;
+    width: 200px;
   }
 
   .cards-grid {
@@ -463,6 +562,21 @@ button {
 
   .header nav {
     padding: 0 1rem;
+  }
+
+  .login-container button,
+  .register-container button {
+    max-width: 180px;
+    width: auto;
+    min-width: 160px;
+  }
+
+  .cta-section {
+    padding: 3rem 1.5rem;
+  }
+
+  .cta-section h2 {
+    font-size: 2rem;
   }
 }
 
