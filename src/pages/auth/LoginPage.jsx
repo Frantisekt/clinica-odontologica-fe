@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { request, setAuthHeader } from '../../components/axios_helper';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -19,12 +19,47 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    
     try {
-      const response = await axios.post('/api/auth/login', formData);
-      localStorage.setItem('token', response.data.token);
-      navigate('/');
+        const loginData = {
+            email: formData.email,
+            password: formData.password
+        };
+        
+        console.log('Enviando datos de login:', loginData);
+        
+        const response = await request(
+            'POST',
+            '/api/auth/login',  // Cambiado de 'authenticate' a 'login'
+            loginData
+        );
+
+        console.log('Respuesta del servidor:', response);
+
+        if (response.data && response.data.token) {
+            setAuthHeader(response.data.token);
+            
+            if (response.data.role) {
+                localStorage.setItem('user_role', response.data.role);
+            }
+            
+            navigate('/');
+        } else {
+            setError('Respuesta inválida del servidor');
+        }
     } catch (error) {
-      setError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
+        console.error('Error de autenticación:', error);
+        
+        if (error.response?.status === 404) {
+            setError('Ruta de autenticación no encontrada');
+        } else if (error.response?.status === 403) {
+            setError('Credenciales inválidas');
+        } else if (error.response?.status === 401) {
+            setError('No autorizado');
+        } else {
+            setError('Error al intentar iniciar sesión. Por favor, intente nuevamente.');
+        }
     }
   };
 
