@@ -4,6 +4,10 @@ export const getAuthToken = () => {
     return window.localStorage.getItem('auth_token');
 };
 
+export const updatePatient = async (patient) => {
+  await axios.put(`/paciente/modificar/${patient.id}`, patient);
+};
+
 export const setAuthHeader = (token) => {
     if (token) {
         window.localStorage.setItem("auth_token", token);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PatientCard from '../../components/patient/PatientCard';
 import { request } from '../../components/axios_helper';
+import EditPatientModal from '../../components/patient/EditPatientModal';
 import '../../styles/PatientList.css';
 
 function PatientList() {
@@ -9,6 +10,10 @@ function PatientList() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
 
   const fetchPatients = async () => {
     try {
@@ -55,6 +60,35 @@ function PatientList() {
     setSearchTerm('');
     setIsSearching(false);
     fetchPatients();
+  };
+
+  const handleEditClick = (patient) => {
+    console.log('Paciente seleccionado para editar:', patient);
+    if (patient && patient.id) {
+      setSelectedPatient(patient);
+      setIsModalOpen(true);
+    } else {
+      console.error('Paciente inválido:', patient);
+    }
+  };
+
+  const handleModalClose = () => {
+    setSelectedPatient(null);
+    setIsModalOpen(false);
+  };
+
+  const handleSavePatient = async (updatedPatient) => {
+    try {
+      await request('PUT', '/paciente/modificar', updatedPatient);
+      setPatients((prevPatients) =>
+        prevPatients.map((patient) =>
+          patient.id === updatedPatient.id ? updatedPatient : patient
+        )
+      );
+      handleModalClose();
+    } catch (err) {
+      setError('Error al guardar los cambios del paciente.');
+    }
   };
 
   useEffect(() => {
@@ -108,6 +142,7 @@ function PatientList() {
                 key={patient.id} 
                 patient={patient}
                 onDelete={() => fetchPatients()}
+                onEdit={() => handleEditClick(patient)}
               />
             ))}
           </div>
@@ -125,7 +160,12 @@ function PatientList() {
           </div>
         )}
       </div>
-
+      <EditPatientModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        patient={selectedPatient}
+        onSave={handleSavePatient}
+      />
     </div>
   );
 }
