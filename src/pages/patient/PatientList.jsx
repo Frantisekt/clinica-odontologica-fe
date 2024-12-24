@@ -80,7 +80,7 @@ function PatientList() {
               className="search-button" 
               disabled={isSearching}
             >
-              {isSearching ? 'Buscando...' : 'Buscar'}
+              {isSearching ? 'Buscar' : 'Buscar'}
             </button>
             {searchTerm && (
               <button 

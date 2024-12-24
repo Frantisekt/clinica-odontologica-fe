@@ -9,11 +9,10 @@
 
 .list-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Cambia la dirección a columna */
+  align-items: flex-start; /* Alinea los elementos al inicio */
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px; /* Espacio entre el título y el buscador */
 }
 
 .search-container {
