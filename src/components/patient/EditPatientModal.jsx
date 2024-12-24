@@ -144,6 +144,21 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
             {errors.apellido && <span className="error-text">{errors.apellido}</span>}
           </div>
 
+          <div className="form-group">
+            <label>
+              DNI:
+              <input
+                type="text"
+                name="dni"
+                value={formData.dni}
+                onChange={handleInputChange}
+                className={errors.dni ? 'input-error' : ''}
+              />
+            </label>
+            {errors.dni && <span className="error-text">{errors.dni}</span>}
+          </div>
+
+
           {error && <div className="error-message">
             {typeof error === 'string' ? error : JSON.stringify(error)}
           </div>}
