@@ -11,7 +11,7 @@ function DentistList() {
   const fetchDentists = async () => {
     try {
       const response = await request('GET', '/odontologo/buscartodos');
-      setPatients(response.data);
+      setDentists(response.data);
       setLoading(false);
     } catch (err) {
       setError('Error al cargar los odontologos.');
