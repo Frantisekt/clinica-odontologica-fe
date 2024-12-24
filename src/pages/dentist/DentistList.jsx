@@ -1,36 +1,41 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { request } from '../../components/axios_helper';
 import DentistCard from '../../components/dentist/DentistCard';
+
 
 function DentistList() {
   const [dentists, setDentists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDentists = async () => {
-      try {
-        const response = await axios.get('/api/odontologos');
-        setDentists(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar los odontólogos');
-        setLoading(false);
-      }
-    };
+  const fetchDentists = async () => {
+    try {
+      const response = await request('GET', '/odontologo/buscartodos');
+      setPatients(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Error al cargar los odontologos.');
+      setLoading(false);
+    }
+  };
 
+
+  useEffect(() => {
     fetchDentists();
   }, []);
 
   if (loading) return <div>Cargando...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div className="odontologo-list-container">
       <h2>Listado de Odontólogos</h2>
       <div className="cards-grid">
         {dentists.map(dentist => (
-          <DentistCard key={dentist.id} dentist={dentist} />
+          <DentistCard 
+            key={dentist.id} 
+            dentist={dentist} 
+          />
         ))}
       </div>
     </div>
