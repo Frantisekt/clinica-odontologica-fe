@@ -11,8 +11,15 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
     nombre: patient?.nombre || '',
     apellido: patient?.apellido || '',
     dni: patient?.dni || '',
+    email: patient?.email || '',
     fechaIngreso: patient?.fechaIngreso || null,
-    domicilio: patient?.domicilio || null
+    domicilio: {
+      id: patient?.domicilio?.id || null,
+      calle: patient?.domicilio?.calle || '',
+      numero: patient?.domicilio?.numero || '',
+      localidad: patient?.domicilio?.localidad || '',
+      provincia: patient?.domicilio?.provincia || ''
+    }
   });
 
   useEffect(() => {
@@ -23,8 +30,15 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
         nombre: patient.nombre,
         apellido: patient.apellido,
         dni: patient.dni,
+        email: patient.email,
         fechaIngreso: patient.fechaIngreso,
-        domicilio: patient.domicilio
+        domicilio: {
+          id: patient.domicilio?.id || null,
+          calle: patient.domicilio?.calle || '',
+          numero: patient.domicilio?.numero || '',
+          localidad: patient.domicilio?.localidad || '',
+          provincia: patient.domicilio?.provincia || ''
+        }
       });
     }
   }, [patient]);
@@ -65,8 +79,18 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Limpiar el error del campo cuando el usuario empiece a escribir
+    if (name.startsWith('domicilio.')) {
+      const domicilioField = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        domicilio: {
+          ...prev.domicilio,
+          [domicilioField]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
@@ -90,8 +114,15 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
         nombre: formData.nombre,
         apellido: formData.apellido,
         dni: formData.dni,
+        email: formData.email,
         fechaIngreso: formData.fechaIngreso,
-        domicilio: formData.domicilio
+        domicilio: {
+          id: formData.domicilio.id,
+          calle: formData.domicilio.calle,
+          numero: formData.domicilio.numero,
+          localidad: formData.domicilio.localidad,
+          provincia: formData.domicilio.provincia
+        }
       };
 
       console.log('Datos a enviar al servidor:', pacienteData); // Para depuración
@@ -158,6 +189,68 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
             {errors.dni && <span className="error-text">{errors.dni}</span>}
           </div>
 
+          <div className="form-group">
+            <label>
+              Email:
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+            </label>
+          </div>
+
+          <div className="domicilio-section">
+            <h4>Domicilio</h4>
+            <div className="form-group">
+              <label>
+                Calle:
+                <input
+                  type="text"
+                  name="domicilio.calle"
+                  value={formData.domicilio.calle}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
+
+            <div className="form-group">
+              <label>
+                Número:
+                <input
+                  type="text"
+                  name="domicilio.numero"
+                  value={formData.domicilio.numero}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
+
+            <div className="form-group">
+              <label>
+                Localidad:
+                <input
+                  type="text"
+                  name="domicilio.localidad"
+                  value={formData.domicilio.localidad}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
+
+            <div className="form-group">
+              <label>
+                Provincia:
+                <input
+                  type="text"
+                  name="domicilio.provincia"
+                  value={formData.domicilio.provincia}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
+          </div>
 
           {error && <div className="error-message">
             {typeof error === 'string' ? error : JSON.stringify(error)}
