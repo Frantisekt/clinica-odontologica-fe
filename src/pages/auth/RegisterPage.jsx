@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { request, setAuthHeader } from '../../components/axios_helper';
 import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
@@ -35,17 +36,24 @@ function RegisterPage() {
     }
 
     try {
-      // Eliminamos confirmPassword antes de enviar al backend
       const { confirmPassword, ...registerData } = formData;
       
-      const response = await axios.post('/api/auth/register', registerData);
+      console.log('Datos a enviar:', registerData); // Para debug
       
-      // Guardamos el token en localStorage
-      localStorage.setItem('token', response.data.token);
+      const response = await request(
+        'POST',
+        '/api/auth/register',
+        registerData
+      );
       
-      // Redirigimos al home
-      navigate('/');
+      console.log('Respuesta del servidor:', response); // Para debug
+      
+      if (response.data && response.data.token) {
+        setAuthHeader(response.data.token);
+        navigate('/');
+      }
     } catch (err) {
+      console.error('Error detallado:', err);
       setError(err.response?.data?.message || 'Error al registrar usuario');
     }
   };

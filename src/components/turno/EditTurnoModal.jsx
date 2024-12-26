@@ -81,7 +81,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
               onChange={(e) => setFormData({...formData, odontologo_id: e.target.value})}
               required
             >
-              <option value="">Seleccione un odont��logo</option>
+              <option value="">Seleccione un odontologo</option>
               {odontologos.map(odontologo => (
                 <option key={odontologo.id} value={odontologo.id}>
                   {`${odontologo.nombre} ${odontologo.apellido}`}

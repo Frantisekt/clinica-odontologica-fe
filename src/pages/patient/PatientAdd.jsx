@@ -20,6 +20,7 @@ function PatientAdd() {
     }
   });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,9 +42,32 @@ function PatientAdd() {
     }
   };
 
+  const validateFields = () => {
+    const errors = {};
+
+    // Validaciones para datos personales de paciente
+    if (!formData.nombre.trim()) errors.nombre = 'El nombre es requerido';
+    if (!formData.apellido.trim()) errors.apellido = 'El apellido es requerido';
+    if (!formData.dni.match(/^\d{6,12}$/)) errors.dni = 'El DNI debe ser un número válido de 7 u 8 dígitos.';
+    if (!formData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) errors.email = 'Ingrese un email válido.';
+    
+    // Validaciones para domicilio
+    if (!formData.domicilio.calle.trim()) errors['domicilio.calle'] = 'La calle es obligatoria.';
+    if (!formData.domicilio.numero.match(/^\d+$/)) errors['domicilio.numero'] = 'El número debe ser un valor numérico.';
+    if (!formData.domicilio.localidad.trim()) errors['domicilio.localidad'] = 'La localidad es obligatoria.';
+    if (!formData.domicilio.provincia.trim()) errors['domicilio.provincia'] = 'La provincia es obligatoria.';
+    
+    return errors;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    const errors = validateFields();
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return; // No enviar si hay errores
+    }
 
     try {
       await request('POST', '/paciente/guardar', formData);
@@ -71,6 +95,7 @@ function PatientAdd() {
             onChange={handleChange}
             required
           />
+          {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
         </div>
 
         <div className="form-group">
@@ -83,6 +108,7 @@ function PatientAdd() {
             onChange={handleChange}
             required
           />
+          {fieldErrors.apellido && <span className="field-error">{fieldErrors.apellido}</span>}
         </div>
 
         <div className="form-group">
@@ -95,6 +121,7 @@ function PatientAdd() {
             onChange={handleChange}
             required
           />
+          {fieldErrors.dni && <span className="field-error">{fieldErrors.dni}</span>}
         </div>
 
         <div className="form-group">
@@ -107,6 +134,7 @@ function PatientAdd() {
             onChange={handleChange}
             required
           />
+          {fieldErrors.email && <span className="field-error">{fieldErrors.email}</span>}
         </div>
 
         <fieldset className="address-fieldset">
@@ -122,6 +150,7 @@ function PatientAdd() {
               onChange={handleChange}
               required
             />
+            {fieldErrors['domicilio.calle'] && <span className="field-error">{fieldErrors['domicilio.calle']}</span>}
           </div>
 
           <div className="form-group">
@@ -134,6 +163,7 @@ function PatientAdd() {
               onChange={handleChange}
               required
             />
+            {fieldErrors['domicilio.numero'] && <span className="field-error">{fieldErrors['domicilio.numero']}</span>}
           </div>
 
           <div className="form-group">
@@ -146,6 +176,7 @@ function PatientAdd() {
               onChange={handleChange}
               required
             />
+            {fieldErrors['domicilio.localidad'] && <span className="field-error">{fieldErrors['domicilio.localidad']}</span>}
           </div>
 
           <div className="form-group">
@@ -158,6 +189,7 @@ function PatientAdd() {
               onChange={handleChange}
               required
             />
+            {fieldErrors['domicilio.provincia'] && <span className="field-error">{fieldErrors['domicilio.provincia']}</span>}
           </div>
         </fieldset>
 
