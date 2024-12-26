@@ -18,10 +18,9 @@ const TurnoList = () => {
     try {
       const response = await request('GET', '/turnos/buscartodos');
       if (response.data) {
-        // Formatear la fecha para cada turno
         const turnosFormateados = response.data.map(turno => ({
           ...turno,
-          fecha: new Date(turno.fecha).toLocaleDateString('es-ES')
+          fecha: new Date(turno.fecha + 'T00:00:00').toLocaleDateString('es-ES')
         }));
         setTurnos(turnosFormateados);
       }

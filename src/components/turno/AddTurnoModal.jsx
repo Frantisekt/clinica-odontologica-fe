@@ -37,7 +37,11 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await request('POST', '/turnos/guardar', formData);
+      const fechaAjustada = {
+        ...formData,
+        fecha: new Date(formData.fecha + 'T00:00:00').toISOString().split('T')[0]
+      };
+      const response = await request('POST', '/turnos/guardar', fechaAjustada);
       if (response.status === 200 || response.status === 201) {
         onSave();
       } else {

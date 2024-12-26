@@ -38,7 +38,11 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await request('PUT', '/turnos/modificar', formData);
+      const fechaAjustada = {
+        ...formData,
+        fecha: new Date(formData.fecha + 'T00:00:00').toISOString().split('T')[0]
+      };
+      const response = await request('PUT', '/turnos/modificar', fechaAjustada);
       if (response.status === 200) {
         onSave();
       } else {
@@ -77,7 +81,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
               onChange={(e) => setFormData({...formData, odontologo_id: e.target.value})}
               required
             >
-              <option value="">Seleccione un odontólogo</option>
+              <option value="">Seleccione un odont��logo</option>
               {odontologos.map(odontologo => (
                 <option key={odontologo.id} value={odontologo.id}>
                   {`${odontologo.nombre} ${odontologo.apellido}`}
