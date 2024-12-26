@@ -28,7 +28,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
 
   const fetchOdontologos = async () => {
     try {
-      const response = await request('GET', '/odontologos/buscartodos');
+      const response = await request('GET', '/odontologo/buscartodos');
       setOdontologos(response.data);
     } catch (error) {
       console.error('Error al cargar odontólogos:', error);

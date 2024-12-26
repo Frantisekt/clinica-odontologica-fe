@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { request } from '../axios_helper';
 import AddTurnoModal from './AddTurnoModal';
 import EditTurnoModal from './EditTurnoModal';
 import '../../styles/TurnoList.css';
@@ -15,9 +16,15 @@ const TurnoList = () => {
 
   const fetchTurnos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/turnos/buscartodos');
-      const data = await response.json();
-      setTurnos(data);
+      const response = await request('GET', '/turnos/buscartodos');
+      if (response.data) {
+        // Formatear la fecha para cada turno
+        const turnosFormateados = response.data.map(turno => ({
+          ...turno,
+          fecha: new Date(turno.fecha).toLocaleDateString('es-ES')
+        }));
+        setTurnos(turnosFormateados);
+      }
     } catch (error) {
       console.error('Error al cargar turnos:', error);
     }
@@ -26,8 +33,8 @@ const TurnoList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Está seguro de eliminar este turno?')) {
       try {
-        await fetch(`http://localhost:8080/turnos/eliminar/${id}`);
-        fetchTurnos(); // Recargar la lista
+        await request('DELETE', `/turnos/eliminar/${id}`);
+        fetchTurnos(); // Recargar la lista después de eliminar
       } catch (error) {
         console.error('Error al eliminar turno:', error);
       }
@@ -65,8 +72,16 @@ const TurnoList = () => {
             {turnos.map((turno) => (
               <tr key={turno.id}>
                 <td>{turno.fecha}</td>
-                <td>{`${turno.pacienteResponseDto.nombre} ${turno.pacienteResponseDto.apellido}`}</td>
-                <td>{`${turno.odontologoResponseDto.nombre} ${turno.odontologoResponseDto.apellido}`}</td>
+                <td>
+                  {turno.pacienteResponseDto ? 
+                    `${turno.pacienteResponseDto.nombre} ${turno.pacienteResponseDto.apellido}` : 
+                    'No disponible'}
+                </td>
+                <td>
+                  {turno.odontologoResponseDto ? 
+                    `${turno.odontologoResponseDto.nombre} ${turno.odontologoResponseDto.apellido}` : 
+                    'No disponible'}
+                </td>
                 <td>
                   <button 
                     className="edit-button"
@@ -93,7 +108,7 @@ const TurnoList = () => {
           onClose={() => setShowAddModal(false)}
           onSave={() => {
             setShowAddModal(false);
-            fetchTurnos();
+            fetchTurnos(); // Recargar la lista después de agregar
           }}
         />
       )}
@@ -105,7 +120,7 @@ const TurnoList = () => {
           turno={selectedTurno}
           onSave={() => {
             setShowEditModal(false);
-            fetchTurnos();
+            fetchTurnos(); // Recargar la lista después de editar
           }}
         />
       )}
