@@ -4,6 +4,7 @@ import { useState } from 'react';
 function Header() {
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [showDentistMenu, setShowDentistMenu] = useState(false);
+  const [showTurnoMenu, setShowTurnoMenu] = useState(false);
 
   return (
     <header className="header">
@@ -41,6 +42,22 @@ function Header() {
                 <div className="dropdown-content">
                   <Link to="/odontologos">Listar odontólogos</Link>
                   <Link to="/odontologos/agregar">Agregar odontólogos</Link>
+                </div>
+              )}
+            </button>
+          </div>
+
+          <div className="dropdown">
+            <button 
+              className="dropdown-btn"
+              onMouseEnter={() => setShowTurnoMenu(true)}
+              onMouseLeave={() => setShowTurnoMenu(false)}
+            >
+              Gestión Turnos
+              {showTurnoMenu && (
+                <div className="dropdown-content">
+                  <Link to="/turnos">Listar turnos</Link>
+                  <Link to="/turnos/agregar">Agregar turnos</Link>
                 </div>
               )}
             </button>
