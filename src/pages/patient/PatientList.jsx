@@ -13,8 +13,6 @@ function PatientList() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
   const fetchPatients = async () => {
     try {
       setLoading(true);

@@ -53,15 +53,23 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
   const validateForm = () => {
     const newErrors = {
       nombre: '',
-      apellido: ''
+      apellido: '',
+      localidad: '',
+      provincia: ''
     };
     let isValid = true;
+
+    // Expresión regular para validar solo letras y espacios
+    const onlyLettersAndSpaces = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
     if (!formData.nombre.trim()) {
       newErrors.nombre = 'El nombre es requerido';
       isValid = false;
     } else if (formData.nombre.length < 2) {
       newErrors.nombre = 'El nombre debe tener al menos 2 caracteres';
+      isValid = false;
+    }else if (!onlyLettersAndSpaces.test(formData.nombre)) {
+      newErrors.nombre = 'El nombre debe contener solo letras.';
       isValid = false;
     }
 
@@ -70,6 +78,25 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
       isValid = false;
     } else if (formData.apellido.length < 2) {
       newErrors.apellido = 'El apellido debe tener al menos 2 caracteres';
+      isValid = false;
+    }else if (!onlyLettersAndSpaces.test(formData.apellido)) {
+      newErrors.apellido = 'El apellido debe contener solo letras.';
+      isValid = false;
+    }
+
+    if (!formData.domicilio.localidad.trim()) {
+      newErrors.localidad = 'La localidad es requerida';
+      isValid = false;
+    } else if (!onlyLettersAndSpaces.test(formData.domicilio.localidad)) {
+      newErrors.localidad = 'La localidad debe contener solo letras.';
+      isValid = false;
+    }
+  
+    if (!formData.domicilio.provincia.trim()) {
+      newErrors.provincia = 'La provincia es requerida';
+      isValid = false;
+    } else if (!onlyLettersAndSpaces.test(formData.domicilio.provincia)) {
+      newErrors.provincia = 'La provincia debe contener solo letras.';
       isValid = false;
     }
 
@@ -235,8 +262,10 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
                   name="domicilio.localidad"
                   value={formData.domicilio.localidad}
                   onChange={handleInputChange}
+                  className={errors.localidad ? 'input-error' : ''}
                 />
               </label>
+              {errors.localidad && <span className="error-text">{errors.localidad}</span>}
             </div>
 
             <div className="form-group">
@@ -247,8 +276,10 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
                   name="domicilio.provincia"
                   value={formData.domicilio.provincia}
                   onChange={handleInputChange}
+                  className={errors.provincia ? 'input-error' : ''}
                 />
               </label>
+              {errors.provincia && <span className="error-text">{errors.provincia}</span>}
             </div>
           </div>
 

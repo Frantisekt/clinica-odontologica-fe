@@ -15,14 +15,14 @@ function DentistList() {
 
   const fetchDentists = async () => {
     try {
+      setLoading(true);
       const response = await request('GET', '/odontologo/buscartodos');
       setDentists(response.data);
-      setLoading(false);
     } catch (err) {
       setError('Error al cargar los odontologos.');
     }finally{
-        setIsSearching(false);
         setLoading(false);
+        setIsSearching(false);
       }
     };
   
@@ -44,8 +44,8 @@ function DentistList() {
     }catch(err){
         setError('Error al buscar odontologos.');
     }finally{
-        setIsSearching(false);
-        setLoading(false);
+      setLoading(false);
+      setIsSearching(false);
     }
   };
 
@@ -94,9 +94,6 @@ function DentistList() {
     fetchDentists();
   }, []);
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div className="odontologo-list-container">
       <div className="list-header">
@@ -131,6 +128,7 @@ function DentistList() {
           </div>
         </form>
       </div>
+      
       <div className="list-content">
         {error ? (
           <div className="error-message">{error}</div>

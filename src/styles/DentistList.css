@@ -1,0 +1,128 @@
+.odontologo-list-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .list-header {
+    display: flex;
+    flex-direction: column; /* Cambia la dirección a columna */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+    margin-bottom: 20px;
+    gap: 10px; /* Espacio entre el título y el buscador */
+  }
+  
+  .search-container {
+    min-width: 300px;
+    flex-grow: 1;
+    max-width: 600px;
+  }
+  
+  .search-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .search-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .search-input:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  
+  .search-button, .reset-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .search-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .search-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+  
+  .reset-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .reset-button:hover {
+    background-color: #c0392b;
+  }
+  
+  .list-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  .no-results {
+    margin: 40px auto;
+    text-align: center;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+    font-size: 1.1em;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .loading, .error-message {
+    margin: 40px auto;
+    text-align: center;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    background: #fde8e7;
+    border-radius: 8px;
+  }
+  
+  .link-button {
+    background: none;
+    border: none;
+    color: #3498db;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1em;
+  }
+  
+  .link-button:hover {
+    color: #2980b9;
+  }
