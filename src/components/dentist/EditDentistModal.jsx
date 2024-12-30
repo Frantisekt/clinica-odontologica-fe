@@ -46,12 +46,17 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     };
     let isValid = true;
 
+    const onlyLettersAndSpaces = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
     // Validación nombre
     if (!formData.nombre.trim()) {
       newErrors.nombre = 'El nombre es requerido';
       isValid = false;
     } else if (formData.nombre.length < 2) {
       newErrors.nombre = 'El nombre debe tener al menos 2 caracteres';
+      isValid = false;
+    }else if (!onlyLettersAndSpaces.test(formData.nombre)) {
+      newErrors.nombre = 'El nombre debe contener solo letras.';
       isValid = false;
     }
 
@@ -61,6 +66,9 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
       isValid = false;
     } else if (formData.apellido.length < 2) {
       newErrors.apellido = 'El apellido debe tener al menos 2 caracteres';
+      isValid = false;
+    }else if (!onlyLettersAndSpaces.test(formData.apellido)) {
+      newErrors.apellido = 'El apellido debe contener solo letras.';
       isValid = false;
     }
 
