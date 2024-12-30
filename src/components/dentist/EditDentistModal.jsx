@@ -11,7 +11,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     apellido: dentist?.apellido || '',
     matricula: dentist?.matricula || '',
     email: dentist?.email || '',
-    //especialidad: dentist?.especialidad || '',
+    especialidad: dentist?.especialidad || 'ODONTOLOGIA_GENERAL',
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     apellido: dentist.apellido,
     matricula: dentist.matricula,
     email: dentist.email,
-    //especialidad: dentist.especialidad,
+    especialidad: dentist.especialidad,
     });
     }
   }, [dentist]);
@@ -36,6 +36,13 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
   });
 
   const [error, setError] = useState(null);
+
+  const especialidades = [
+    { value: 'ODONTOLOGIA_GENERAL', label: 'Odontología General' },
+    { value: 'CIRUGIA_ORAL', label: 'Cirugía Oral' },
+    { value: 'ORTODONCIA', label: 'Ortodoncia' },
+    { value: 'PERIODONCIA', label: 'Periodoncia' }
+  ];
 
   const validateForm = () => {
     const newErrors = {
@@ -117,7 +124,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
         apellido: formData.apellido,
         matricula: formData.matricula,
         email: formData.email,
-        //especialidad: formData.especialidad,
+        especialidad: formData.especialidad,
       };
 
       console.log('Datos a enviar al servidor:', odontologoData); // Para depuración
@@ -189,6 +196,23 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
                 />
               </label>
               {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>
+                Especialidad:
+                <select
+                  name="especialidad"
+                  value={formData.especialidad}
+                  onChange={handleInputChange}
+                >
+                  {especialidades.map(esp => (
+                    <option key={esp.value} value={esp.value}>
+                      {esp.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
 
