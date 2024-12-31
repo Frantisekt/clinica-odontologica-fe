@@ -67,6 +67,7 @@ const TurnoList = () => {
           <thead>
             <tr>
               <th>Fecha</th>
+              <th>Hora</th>
               <th>Paciente</th>
               <th>Odontólogo</th>
               <th>Acciones</th>
@@ -75,7 +76,8 @@ const TurnoList = () => {
           <tbody>
             {turnos.map((turno) => (
               <tr key={turno.id}>
-                <td>{turno.fecha}</td>
+                <td>{turno.fechaFormateada}</td>
+                <td>{turno.horaFormateada}</td>
                 <td>
                   {turno.pacienteResponseDto ? 
                     `${turno.pacienteResponseDto.nombre} ${turno.pacienteResponseDto.apellido}` : 
