@@ -36,6 +36,12 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
     }
   };
 
+  const horasDisponibles = [];
+  for (let i = 8; i <= 18; i++) {
+    const hora = i.toString().padStart(2, '0') + ':00';
+    horasDisponibles.push(hora);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -46,10 +52,10 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
       };
       
       const response = await request('PUT', '/turnos/modificar', turnoData);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         onSave();
       } else {
-        console.error('Error al modificar el turno');
+        console.error('Error al guardar el turno');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -105,12 +111,17 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
 
           <div className="form-group">
             <label>Hora:</label>
-            <input
-              type="time"
+            <select
               value={formData.hora}
               onChange={(e) => setFormData({...formData, hora: e.target.value})}
               required
-            />
+            >
+              {horasDisponibles.map(hora => (
+                <option key={hora} value={hora}>
+                  {hora}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="modal-buttons">
