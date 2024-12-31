@@ -8,7 +8,9 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
     paciente_id: turno?.pacienteResponseDto?.id || '',
     odontologo_id: turno?.odontologoResponseDto?.id || '',
     fecha: turno?.fecha?.split('T')[0] || '',
-    hora: turno?.fecha?.split('T')[1]?.substring(0, 5) || ''
+    hora: turno?.hora || '',
+    nota: turno?.nota || '',
+    necesitaAcompanante: turno?.necesitaAcompanante || false
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
@@ -46,16 +48,22 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
     e.preventDefault();
     try {
       const turnoData = {
-        ...formData,
+        id: formData.id,
+        paciente_id: formData.paciente_id,
+        odontologo_id: formData.odontologo_id,
         fecha: formData.fecha,
-        hora: formData.hora
+        hora: formData.hora,
+        nota: formData.nota || '',
+        necesitaAcompanante: formData.necesitaAcompanante || false
       };
+      
+      console.log('Enviando turno para modificar:', turnoData); // Para debug
       
       const response = await request('PUT', '/turnos/modificar', turnoData);
       if (response.status === 200 || response.status === 201) {
         onSave();
       } else {
-        console.error('Error al guardar el turno');
+        console.error('Error al modificar el turno');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -122,6 +130,27 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>Nota:</label>
+            <textarea
+              value={formData.nota}
+              onChange={(e) => setFormData({...formData, nota: e.target.value})}
+              rows="3"
+              placeholder="Agregar notas adicionales..."
+            />
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.necesitaAcompanante}
+                onChange={(e) => setFormData({...formData, necesitaAcompanante: e.target.checked})}
+              />
+              Necesita Acompañante
+            </label>
           </div>
 
           <div className="modal-buttons">

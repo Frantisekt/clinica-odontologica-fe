@@ -7,7 +7,9 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
     paciente_id: '',
     odontologo_id: '',
     fecha: '',
-    hora: '08:00'
+    hora: '08:00',
+    nota: '',
+    necesitaAcompanante: false
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
@@ -45,10 +47,15 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
     e.preventDefault();
     try {
       const turnoData = {
-        ...formData,
+        paciente_id: formData.paciente_id,
+        odontologo_id: formData.odontologo_id,
         fecha: formData.fecha,
-        hora: formData.hora
+        hora: formData.hora,
+        nota: formData.nota,
+        necesitaAcompanante: formData.necesitaAcompanante
       };
+      
+      console.log('Enviando turno:', turnoData); // Para debug
       
       const response = await request('POST', '/turnos/guardar', turnoData);
       if (response.status === 200 || response.status === 201) {
@@ -121,6 +128,27 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>Nota:</label>
+            <textarea
+              value={formData.nota}
+              onChange={(e) => setFormData({...formData, nota: e.target.value})}
+              rows="3"
+              placeholder="Agregar notas adicionales..."
+            />
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={formData.necesitaAcompanante}
+                onChange={(e) => setFormData({...formData, necesitaAcompanante: e.target.checked})}
+              />
+              Necesita Acompañante
+            </label>
           </div>
 
           <div className="modal-buttons">

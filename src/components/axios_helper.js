@@ -72,3 +72,16 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export const logout = async () => {
+    try {
+        const token = getAuthToken();
+        if (token) {
+            await request('POST', '/api/auth/logout');
+        }
+    } finally {
+        // Limpiamos el token y el rol independientemente de la respuesta
+        setAuthHeader(null);
+        localStorage.removeItem('user_role');
+    }
+};

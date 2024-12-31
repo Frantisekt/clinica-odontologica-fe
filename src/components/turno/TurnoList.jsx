@@ -70,14 +70,16 @@ const TurnoList = () => {
               <th>Hora</th>
               <th>Paciente</th>
               <th>Odontólogo</th>
+              <th>Nota</th>
+              <th>Acompañante</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {turnos.map((turno) => (
               <tr key={turno.id}>
-                <td>{turno.fecha}</td>
-                <td>{turno.hora}</td>
+                <td>{turno.fechaFormateada}</td>
+                <td>{turno.horaFormateada}</td>
                 <td>
                   {turno.pacienteResponseDto ? 
                     `${turno.pacienteResponseDto.nombre} ${turno.pacienteResponseDto.apellido}` : 
@@ -88,6 +90,8 @@ const TurnoList = () => {
                     `${turno.odontologoResponseDto.nombre} ${turno.odontologoResponseDto.apellido}` : 
                     'No disponible'}
                 </td>
+                <td>{turno.nota || '-'}</td>
+                <td>{turno.necesitaAcompanante ? 'Sí' : 'No'}</td>
                 <td>
                   <button 
                     className="edit-button"
