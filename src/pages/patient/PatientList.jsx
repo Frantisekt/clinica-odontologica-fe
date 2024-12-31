@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import PatientCard from '../../components/patient/PatientCard';
 import { request } from '../../components/axios_helper';
 import EditPatientModal from '../../components/patient/EditPatientModal';
+import AddPatientModal from '../../components/patient/AddPatientModal';
 import '../../styles/PatientList.css';
 
 function PatientList() {
@@ -12,6 +13,7 @@ function PatientList() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchPatients = async () => {
     try {
@@ -97,35 +99,43 @@ function PatientList() {
     <div className="patient-list-container">
       <div className="list-header">
         <h2>Listado de Pacientes</h2>
-        <form onSubmit={handleSearch} className="search-container">
-          <div className="search-input-group">
-            <input
-              type="text"
-              placeholder="Buscar por nombre..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-              disabled={isSearching}
-            />
-            <button 
-              type="submit" 
-              className="search-button" 
-              disabled={isSearching}
-            >
-              {isSearching ? 'Buscar' : 'Buscar'}
-            </button>
-            {searchTerm && (
+        <div className="header-actions">
+          <button 
+            className="add-button"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Agregar Paciente
+          </button>
+          <form onSubmit={handleSearch} className="search-container">
+            <div className="search-input-group">
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+                disabled={isSearching}
+              />
               <button 
-                type="button" 
-                className="reset-button"
-                onClick={handleReset}
+                type="submit" 
+                className="search-button" 
                 disabled={isSearching}
               >
-                Limpiar
+                {isSearching ? 'Buscar' : 'Buscar'}
               </button>
-            )}
-          </div>
-        </form>
+              {searchTerm && (
+                <button 
+                  type="button" 
+                  className="reset-button"
+                  onClick={handleReset}
+                  disabled={isSearching}
+                >
+                  Limpiar
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
       
       <div className="list-content">
@@ -158,6 +168,14 @@ function PatientList() {
           </div>
         )}
       </div>
+      <AddPatientModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={() => {
+          fetchPatients();
+          setIsAddModalOpen(false);
+        }}
+      />
       <EditPatientModal
         isOpen={isModalOpen}
         onClose={handleModalClose}

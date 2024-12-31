@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { request } from '../../components/axios_helper';
 import DentistCard from '../../components/dentist/DentistCard';
 import EditDentistModal from '../../components/dentist/EditDentistModal';
+import AddDentistModal from '../../components/dentist/AddDentistModal';
 import '../../styles/DentistList.css';
 
 function DentistList() {
@@ -12,6 +13,7 @@ function DentistList() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedDentist, setSelectedDentist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchDentists = async () => {
     try {
@@ -90,6 +92,10 @@ function DentistList() {
     }
   };
 
+  const handleAddDentist = () => {
+    setIsAddModalOpen(true);
+  };
+
   useEffect(() => {
     fetchDentists();
   }, []);
@@ -98,6 +104,12 @@ function DentistList() {
     <div className="odontologo-list-container">
       <div className="list-header">
         <h2>Listado de Odontólogos</h2>
+        <button 
+          className="add-button" 
+          onClick={handleAddDentist}
+        >
+          Agregar Odontólogo
+        </button>
         <form onSubmit={handleSearch} className="search-container">
           <div className="search-input-group">
             <input
@@ -164,6 +176,14 @@ function DentistList() {
         onClose={handleModalClose}
         onSave={handleSaveDentist}
         dentist={selectedDentist}
+      />
+      <AddDentistModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={() => {
+          fetchDentists();
+          setIsAddModalOpen(false);
+        }}
       />
     </div>
   );

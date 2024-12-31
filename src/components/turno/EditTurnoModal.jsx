@@ -7,7 +7,8 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
     id: turno?.id || '',
     paciente_id: turno?.pacienteResponseDto?.id || '',
     odontologo_id: turno?.odontologoResponseDto?.id || '',
-    fecha: turno?.fecha || ''
+    fecha: turno?.fecha?.split('T')[0] || '',
+    hora: turno?.fecha?.split('T')[1]?.substring(0, 5) || ''
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
@@ -38,11 +39,13 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const fechaAjustada = {
+      const turnoData = {
         ...formData,
-        fecha: new Date(formData.fecha + 'T00:00:00').toISOString().split('T')[0]
+        fecha: formData.fecha,
+        hora: formData.hora
       };
-      const response = await request('PUT', '/turnos/modificar', fechaAjustada);
+      
+      const response = await request('PUT', '/turnos/modificar', turnoData);
       if (response.status === 200) {
         onSave();
       } else {
@@ -96,6 +99,16 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
               type="date"
               value={formData.fecha}
               onChange={(e) => setFormData({...formData, fecha: e.target.value})}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Hora:</label>
+            <input
+              type="time"
+              value={formData.hora}
+              onChange={(e) => setFormData({...formData, hora: e.target.value})}
               required
             />
           </div>

@@ -6,7 +6,8 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     paciente_id: '',
     odontologo_id: '',
-    fecha: ''
+    fecha: '',
+    hora: '08:00'
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
@@ -34,14 +35,22 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
     }
   };
 
+  const horasDisponibles = [];
+  for (let i = 8; i <= 18; i++) {
+    const hora = i.toString().padStart(2, '0') + ':00';
+    horasDisponibles.push(hora);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const fechaAjustada = {
+      const turnoData = {
         ...formData,
-        fecha: new Date(formData.fecha + 'T00:00:00').toISOString().split('T')[0]
+        fecha: formData.fecha,
+        hora: formData.hora
       };
-      const response = await request('POST', '/turnos/guardar', fechaAjustada);
+      
+      const response = await request('POST', '/turnos/guardar', turnoData);
       if (response.status === 200 || response.status === 201) {
         onSave();
       } else {
@@ -97,6 +106,21 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
               onChange={(e) => setFormData({...formData, fecha: e.target.value})}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Hora:</label>
+            <select
+              value={formData.hora}
+              onChange={(e) => setFormData({...formData, hora: e.target.value})}
+              required
+            >
+              {horasDisponibles.map(hora => (
+                <option key={hora} value={hora}>
+                  {hora}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="modal-buttons">

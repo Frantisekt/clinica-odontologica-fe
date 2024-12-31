@@ -20,7 +20,12 @@ const TurnoList = () => {
       if (response.data) {
         const turnosFormateados = response.data.map(turno => ({
           ...turno,
-          fecha: new Date(turno.fecha + 'T00:00:00').toLocaleDateString('es-ES')
+          fechaFormateada: new Date(turno.fecha + 'T' + turno.hora).toLocaleDateString('es-ES', {
+            dateStyle: 'medium'
+          }),
+          horaFormateada: new Date(turno.fecha + 'T' + turno.hora).toLocaleTimeString('es-ES', {
+            timeStyle: 'short'
+          })
         }));
         setTurnos(turnosFormateados);
       }
