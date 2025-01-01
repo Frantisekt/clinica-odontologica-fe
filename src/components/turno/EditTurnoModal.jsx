@@ -53,7 +53,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
         odontologo_id: formData.odontologo_id,
         fecha: formData.fecha,
         hora: formData.hora,
-        nota: formData.nota || '',
+        nota: formData.nota,
         necesitaAcompanante: formData.necesitaAcompanante || false
       };
       
@@ -67,6 +67,10 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
       }
     } catch (error) {
       console.error('Error:', error);
+
+      if (error.response && error.response.data) {
+        alert(error.response.data.message || 'Ocurrió un error al guardar el turno.');
+      }
     }
   };
 
@@ -136,11 +140,18 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
             <label>Nota:</label>
             <textarea
               value={formData.nota}
-              onChange={(e) => setFormData({...formData, nota: e.target.value})}
+              onChange={(e) => {
+                if (e.target.value.length <= 500) {
+                  setFormData({ ...formData, nota: e.target.value });
+                }
+              }}
               rows="3"
-              placeholder="Agregar notas adicionales..."
+              maxLength="500"
+              placeholder="Agregar notas adicionales (máximo 500 caracteres)..."
             />
+            <small>{formData.nota.length}/500 caracteres usados</small>
           </div>
+
 
           <div className="form-group checkbox-group">
             <label>
