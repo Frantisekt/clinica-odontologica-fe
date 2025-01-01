@@ -14,6 +14,7 @@ function PatientList() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [searchType, setSearchType] = useState('nombre');
 
   const fetchPatients = async () => {
     try {
@@ -32,24 +33,78 @@ function PatientList() {
     try {
       setIsSearching(true);
       setLoading(true);
-      setError(null); // Limpia cualquier error previo
-      const endpoint = searchTerm.trim() ? `/paciente/buscarNombre/${searchTerm}` : '/paciente/buscartodos';
-      const response = await request('GET', endpoint);
-  
-      if (response.data.length === 0) {
-        setPatients([]); // Asegúrate de que la lista esté vacía
-        setError('No se encontraron pacientes con ese nombre.');
+      setError(null);
+      
+      let endpoint;
+      if (searchTerm.trim()) {
+        if (searchType === 'telefono') {
+          if (!/^\d+$/.test(searchTerm)) {
+            setError('El teléfono debe contener solo números');
+            setPatients([]);
+            setLoading(false);
+            setIsSearching(false);
+            return;
+          }
+        }
+
+        endpoint = searchType === 'nombre' 
+          ? `/paciente/buscarNombre/${searchTerm}`
+          : `/paciente/buscarTelefono/${searchTerm}`;
+
+        console.log('Realizando búsqueda en:', endpoint);
+        
+        try {
+          const response = await request('GET', endpoint);
+          console.log('Respuesta del servidor:', response);
+          
+          if (response.data && Array.isArray(response.data)) {
+            if (response.data.length === 0) {
+              setError(`No se encontraron pacientes con ese ${searchType}`);
+            } else {
+              setPatients(response.data);
+              setError(null);
+            }
+          } else {
+            setError('Formato de respuesta inválido');
+          }
+        } catch (error) {
+          console.error('Error específico de búsqueda:', error);
+          if (error.response?.status === 404) {
+            setError(`No se encontraron pacientes con ese ${searchType}`);
+            setPatients([]);
+          } else {
+            setError(`Error al buscar por ${searchType}: ${error.message}`);
+          }
+        }
       } else {
-        setPatients(response.data);
+        try {
+          const response = await request('GET', '/paciente/buscartodos');
+          setPatients(response.data);
+          setError(null);
+        } catch (error) {
+          setError('Error al cargar los pacientes');
+          console.error('Error al cargar todos los pacientes:', error);
+        }
       }
     } catch (err) {
-      setError('Error al buscar pacientes.');
+      console.error('Error general:', err);
+      setError('Error en la búsqueda');
     } finally {
       setLoading(false);
       setIsSearching(false);
     }
   };
-  
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    
+    if (searchType === 'telefono' && value !== '' && !/^\d+$/.test(value)) {
+      setError('El teléfono debe contener solo números');
+    } else {
+      setError(null);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -99,48 +154,61 @@ function PatientList() {
     <div className="patient-list-container">
       <div className="list-header">
         <h2>Listado de Pacientes</h2>
-        <div className="header-actions">
-          <button 
-            className="add-button"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            Agregar Paciente
-          </button>
-          <form onSubmit={handleSearch} className="search-container">
-            <div className="search-input-group">
-              <input
-                type="text"
-                placeholder="Buscar por nombre..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-                disabled={isSearching}
-              />
+        <button className="add-button" onClick={() => setIsAddModalOpen(true)}>
+          Agregar Paciente
+        </button>
+        <form onSubmit={handleSearch} className="search-container">
+          <div className="search-input-group">
+            <select 
+              value={searchType} 
+              onChange={(e) => setSearchType(e.target.value)}
+              className="search-type-select"
+            >
+              <option value="nombre">Buscar por nombre</option>
+              <option value="telefono">Buscar por teléfono</option>
+            </select>
+            <input
+              type="text"
+              placeholder={`Buscar por ${searchType}...`}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="search-input"
+              disabled={isSearching}
+            />
+            <button 
+              type="submit" 
+              className="search-button" 
+              disabled={isSearching || (searchType === 'telefono' && searchTerm && !/^\d+$/.test(searchTerm))}
+            >
+              {isSearching ? 'Buscando...' : 'Buscar'}
+            </button>
+            {searchTerm && (
               <button 
-                type="submit" 
-                className="search-button" 
+                type="button" 
+                className="reset-button"
+                onClick={handleReset}
                 disabled={isSearching}
               >
-                {isSearching ? 'Buscar' : 'Buscar'}
+                Limpiar
               </button>
-              {searchTerm && (
-                <button 
-                  type="button" 
-                  className="reset-button"
-                  onClick={handleReset}
-                  disabled={isSearching}
-                >
-                  Limpiar
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
+            )}
+          </div>
+        </form>
       </div>
       
       <div className="list-content">
         {error ? (
-          <div className="error-message">{error}</div>
+          <div className="error-message">
+            <p>{error}</p>
+            {searchTerm && (
+              <button 
+                onClick={handleReset} 
+                className="link-button"
+              >
+                Ver todos los pacientes
+              </button>
+            )}
+          </div>
         ) : loading ? (
           <div className="loading">Cargando...</div>
         ) : patients.length > 0 ? (

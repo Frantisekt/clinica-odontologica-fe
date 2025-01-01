@@ -11,6 +11,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     apellido: dentist?.apellido || '',
     matricula: dentist?.matricula || '',
     email: dentist?.email || '',
+    telefono: dentist?.telefono || '',
     especialidad: dentist?.especialidad || 'ODONTOLOGIA_GENERAL',
   });
 
@@ -23,6 +24,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     apellido: dentist.apellido,
     matricula: dentist.matricula,
     email: dentist.email,
+    telefono: dentist.telefono,
     especialidad: dentist.especialidad,
     });
     }
@@ -32,7 +34,8 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
     nombre: '',
     apellido: '',
     matricula: '',
-    email: ''
+    email: '',
+    telefono: '',
   });
 
   const [error, setError] = useState(null);
@@ -49,7 +52,8 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
       nombre: '',
       apellido: '',
       matricula: '',
-      email: ''
+      email: '',
+      telefono: '',
     };
     let isValid = true;
 
@@ -94,6 +98,15 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
       isValid = false;
     }
 
+    // Validación del teléfono
+    if (!formData.telefono.trim()) {
+      newErrors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d{9,15}$/.test(formData.telefono)) {
+      newErrors.telefono = 'El teléfono debe tener al menos nueve dígitos';
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -124,6 +137,7 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
         apellido: formData.apellido,
         matricula: formData.matricula,
         email: formData.email,
+        telefono: formData.telefono,
         especialidad: formData.especialidad,
       };
 
@@ -196,6 +210,21 @@ function EditDentistModal({ isOpen, onClose, dentist, onSave }) {
                 />
               </label>
               {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>
+                Teléfono:
+                <input 
+                  type="tel"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  className={errors.telefono ? 'input-error' : ''}
+                  placeholder="Ej: 1234567890"
+                />
+              </label>
+              {errors.telefono && <span className="error-text">{errors.telefono}</span>}
             </div>
 
             <div className="form-group">

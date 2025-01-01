@@ -14,6 +14,7 @@ function DentistList() {
   const [selectedDentist, setSelectedDentist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [searchType, setSearchType] = useState('nombre');
 
   const fetchDentists = async () => {
     try {
@@ -30,22 +31,56 @@ function DentistList() {
   
 
   const searchDentists = async () => {
-    try{
-        setIsSearching(true);
-        setLoading(true);
-        setError(null);
-        const endpoint = searchTerm.trim() ? `/odontologo/buscarNombre/${searchTerm}` : '/odontologo/buscartodos';
-        const response = await request('GET', endpoint);
-
-        if(response.data.length === 0){
+    try {
+      setIsSearching(true);
+      setLoading(true);
+      setError(null);
+      
+      let endpoint;
+      if (searchTerm.trim()) {
+        // Validación para búsqueda por teléfono
+        if (searchType === 'telefono') {
+          if (!/^\d+$/.test(searchTerm)) {
+            setError('El teléfono debe contener solo números');
             setDentists([]);
-            setError('No se encontraron odontologos con ese nombre.');
-        }else{
-            setDentists(response.data);
+            setLoading(false);
+            setIsSearching(false);
+            return;
+          }
         }
-    }catch(err){
-        setError('Error al buscar odontologos.');
-    }finally{
+
+        endpoint = searchType === 'nombre' 
+          ? `/odontologo/buscarNombre/${searchTerm}`
+          : `/odontologo/buscarTelefono/${searchTerm}`;
+
+        console.log('Realizando búsqueda en:', endpoint); // Debug
+      } else {
+        endpoint = '/odontologo/buscartodos';
+      }
+
+      try {
+        const response = await request('GET', endpoint);
+        if (response.data && Array.isArray(response.data)) {
+          setDentists(response.data);
+          setError(null);
+        } else {
+          setDentists([]);
+          setError('No se encontraron resultados');
+        }
+      } catch (error) {
+        // Manejo específico para error 404
+        if (error.response?.status === 404) {
+          setDentists([]);
+          setError(`No se encontraron odontólogos con ese ${searchType === 'nombre' ? 'nombre' : 'teléfono'}`);
+        } else {
+          throw error; // Re-lanzar otros errores
+        }
+      }
+    } catch (err) {
+      console.error('Error en la búsqueda:', err);
+      setError(`Error al buscar odontólogos por ${searchType}`);
+      setDentists([]);
+    } finally {
       setLoading(false);
       setIsSearching(false);
     }
@@ -112,9 +147,17 @@ function DentistList() {
         </button>
         <form onSubmit={handleSearch} className="search-container">
           <div className="search-input-group">
+            <select 
+              value={searchType} 
+              onChange={(e) => setSearchType(e.target.value)}
+              className="search-type-select"
+            >
+              <option value="nombre">Buscar por nombre</option>
+              <option value="telefono">Buscar por teléfono</option>
+            </select>
             <input
               type="text"
-              placeholder="Buscar por nombre..."
+              placeholder={`Buscar por ${searchType}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"

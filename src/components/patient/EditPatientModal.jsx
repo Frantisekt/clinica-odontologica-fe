@@ -13,6 +13,7 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
     dni: patient?.dni || '',
     email: patient?.email || '',
     fechaIngreso: patient?.fechaIngreso || null,
+    telefono: patient?.telefono || '',
     domicilio: {
       id: patient?.domicilio?.id || null,
       calle: patient?.domicilio?.calle || '',
@@ -32,6 +33,7 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
         dni: patient.dni,
         email: patient.email,
         fechaIngreso: patient.fechaIngreso,
+        telefono: patient.telefono,
         domicilio: {
           id: patient.domicilio?.id || null,
           calle: patient.domicilio?.calle || '',
@@ -45,7 +47,10 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
 
   const [errors, setErrors] = useState({
     nombre: '',
-    apellido: ''
+    apellido: '',
+    telefono: '',
+    localidad: '',
+    provincia: ''
   });
 
   const [error, setError] = useState(null);
@@ -100,6 +105,14 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
       isValid = false;
     }
 
+    if (!formData.telefono.trim()) {
+      newErrors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d{9,15}$/.test(formData.telefono)) {
+      newErrors.telefono = 'El teléfono debe tener 9 dígitos';
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -143,6 +156,7 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
         dni: formData.dni,
         email: formData.email,
         fechaIngreso: formData.fechaIngreso,
+        telefono: formData.telefono,
         domicilio: {
           id: formData.domicilio.id,
           calle: formData.domicilio.calle,
@@ -226,6 +240,21 @@ function EditPatientModal({ isOpen, onClose, patient, onSave }) {
                 onChange={handleInputChange}
               />
             </label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Teléfono:
+              <input
+                type="tel"
+                name="telefono"
+                value={formData.telefono}
+                onChange={handleInputChange}
+                className={errors.telefono ? 'input-error' : ''}
+                placeholder="Ej: 1234567890"
+              />
+            </label>
+            {errors.telefono && <span className="error-text">{errors.telefono}</span>}
           </div>
 
           <div className="domicilio-section">

@@ -8,6 +8,7 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
     apellido: '',
     matricula: '',
     email: '',
+    telefono: '',
     especialidad: 'ODONTOLOGIA_GENERAL',
   });
 
@@ -15,7 +16,8 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
     nombre: '',
     apellido: '',
     matricula: '',
-    email: ''
+    email: '',
+    telefono: '',
   });
 
   const especialidades = [
@@ -30,7 +32,8 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
       nombre: '',
       apellido: '',
       matricula: '',
-      email: ''
+      email: '',
+      telefono: '',
     };
     let isValid = true;
 
@@ -65,6 +68,14 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
       isValid = false;
     }
 
+    if (!formData.telefono.trim()) {
+      newErrors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d{10}$/.test(formData.telefono)) {
+      newErrors.telefono = 'El teléfono debe tener 10 dígitos';
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -89,6 +100,7 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
           apellido: '',
           matricula: '',
           email: '',
+          telefono: '',
           especialidad: 'ODONTOLOGIA_GENERAL',
         });
       }
@@ -156,6 +168,20 @@ const AddDentistModal = ({ isOpen, onClose, onSave }) => {
                 />
               </label>
               {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+            <div className="form-group">
+              <label>
+                Teléfono:
+                <input 
+                  type="tel"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  className={errors.telefono ? 'input-error' : ''}
+                  placeholder="Ej: 1234567890"
+                />
+              </label>
+              {errors.telefono && <span className="error-text">{errors.telefono}</span>}
             </div>
             <div className="form-group">
               <label>
