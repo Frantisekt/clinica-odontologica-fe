@@ -10,6 +10,9 @@ Currently, two official plugins are available:
 Important: 
 To run the project in your localhost you'll need to install vite on the project. 
 Open the project in a terminal and run:
-npm install vite 
-npm run dev
+
+-npm install vite 
+
+-npm run dev
+
 the project should run in http://localhost:5173/
