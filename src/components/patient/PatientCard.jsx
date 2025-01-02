@@ -24,6 +24,7 @@ function PatientCard({ patient, onDelete, onEdit }) {
       <div className="patient-info">
         <p><strong>DNI:</strong> {patient.dni}</p>
         <p><strong>Email:</strong> {patient.email}</p>
+        <p><strong>Teléfono:</strong> {patient.telefono}</p>
         <p><strong>Domicilio:</strong> {direccionCompleta}</p>
         <p><strong>Fecha de Alta:</strong> {
           patient.fechaAlta ? 
