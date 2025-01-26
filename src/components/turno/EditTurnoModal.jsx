@@ -14,6 +14,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchPacientes();
@@ -46,6 +47,7 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const turnoData = {
         id: formData.id,
@@ -57,20 +59,30 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
         necesitaAcompanante: formData.necesitaAcompanante || false
       };
       
-      console.log('Enviando turno para modificar:', turnoData); // Para debug
-      
       const response = await request('PUT', '/turnos/modificar', turnoData);
       if (response.status === 200 || response.status === 201) {
         onSave();
-      } else {
-        console.error('Error al modificar el turno');
       }
     } catch (error) {
-      console.error('Error:', error);
-
-      if (error.response && error.response.data) {
-        alert(error.response.data.message || 'Ocurrió un error al guardar el turno.');
+      console.log('Error completo:', error);
+      console.log('Response data:', error.response?.data);
+      
+      let errorMessage = '';
+      if (error.response?.data?.message) {
+        if (error.response.data.message.includes('Ya existe un turno')) {
+          errorMessage = 'Ya existe un turno para este odontólogo en la fecha y hora especificadas.';
+        } else if (error.response.data.message.includes('Query did not return a unique result')) {
+          errorMessage = 'Error: Se encontraron múltiples registros cuando se esperaba uno solo.';
+        } else {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.response?.status === 409) {
+        errorMessage = 'Conflicto: El turno no puede ser guardado debido a un conflicto de horarios.';
+      } else {
+        errorMessage = 'Ocurrió un error al modificar el turno. Por favor, intente nuevamente.';
       }
+      
+      setError(errorMessage);
     }
   };
 
@@ -78,6 +90,11 @@ const EditTurnoModal = ({ isOpen, onClose, turno, onSave }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>Editar Turno</h3>
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Paciente:</label>

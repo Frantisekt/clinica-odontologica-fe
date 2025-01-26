@@ -25,39 +25,30 @@ axios.defaults.withCredentials = true; // Importante para CORS
 
 export const request = async (method, url, data) => {
     try {
+        const token = getAuthToken();
         const config = {
             method: method,
             url: url,
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
             },
             withCredentials: true,
             data: data
         };
 
-        // Solo añadimos el token si NO es una ruta de autenticación
-        const token = getAuthToken();
-        if (token && !url.includes('/api/auth/')) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
+        console.log('Request config:', config); // Debug
 
         const response = await axios(config);
         return response;
     } catch (error) {
-        if (error.response) {
-            // El servidor respondió con un estado de error
-            console.error('Error de respuesta:', error.response.data);
-            throw error;
-        } else if (error.request) {
-            // La petición fue hecha pero no se recibió respuesta
-            console.error('Error de red:', error.message);
-            throw error;
-        } else {
-            // Algo sucedió al configurar la petición
-            console.error('Error:', error.message);
-            throw error;
-        }
+        console.log('Request error details:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers
+        });
+        throw error;
     }
 };
 
@@ -65,7 +56,9 @@ export const request = async (method, url, data) => {
 axios.interceptors.response.use(
     response => response,
     error => {
-        if (error.response?.status === 401 || error.response?.status === 403) {
+        // Solo cerrar sesión si es un error de token inválido o expirado
+        if (error.response?.status === 401 && 
+            error.response?.data?.message?.includes('token')) {
             setAuthHeader(null);
             window.location.href = '/login';
         }

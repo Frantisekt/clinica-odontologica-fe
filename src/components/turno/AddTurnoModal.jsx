@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { request } from '../axios_helper';
+import { request, getAuthToken } from '../axios_helper';
 import '../../styles/TurnoModal.css';
 
 const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
@@ -13,6 +13,7 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
   });
   const [pacientes, setPacientes] = useState([]);
   const [odontologos, setOdontologos] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchPacientes();
@@ -45,26 +46,44 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const turnoData = {
-        paciente_id: formData.paciente_id,
-        odontologo_id: formData.odontologo_id,
-        fecha: formData.fecha,
-        hora: formData.hora,
-        nota: formData.nota,
-        necesitaAcompanante: formData.necesitaAcompanante
-      };
-      
-      console.log('Enviando turno:', turnoData); // Para debug
-      
-      const response = await request('POST', '/turnos/guardar', turnoData);
-      if (response.status === 200 || response.status === 201) {
-        onSave();
-      } else {
-        console.error('Error al guardar el turno');
-      }
+        const turnoData = {
+            paciente_id: formData.paciente_id,
+            odontologo_id: formData.odontologo_id,
+            fecha: formData.fecha,
+            hora: formData.hora,
+            nota: formData.nota,
+            necesitaAcompanante: formData.necesitaAcompanante
+        };
+        
+        console.log('Enviando datos:', turnoData);
+        
+        const response = await request('POST', '/turnos/guardar', turnoData);
+        if (response.status === 200 || response.status === 201) {
+            onSave();
+        }
     } catch (error) {
-      console.error('Error:', error);
+        console.log('Error completo:', error);
+        console.log('Response data:', error.response?.data);
+        console.log('Error message:', error.response?.data?.message);
+        
+        let errorMessage = '';
+        if (error.response?.data?.message) {
+            if (error.response.data.message.includes('Ya existe un turno')) {
+                errorMessage = 'Ya existe un turno para este odontólogo en la fecha y hora especificadas.';
+            } else if (error.response.data.message.includes('Query did not return a unique result')) {
+                errorMessage = 'Error: Se encontraron múltiples registros cuando se esperaba uno solo.';
+            } else {
+                errorMessage = error.response.data.message;
+            }
+        } else if (error.response?.status === 409) {
+            errorMessage = 'Conflicto: El turno no puede ser guardado debido a un conflicto de horarios.';
+        } else {
+            errorMessage = 'Ocurrió un error al guardar el turno. Por favor, intente nuevamente.';
+        }
+        
+        setError(errorMessage);
     }
   };
 
@@ -72,6 +91,7 @@ const AddTurnoModal = ({ isOpen, onClose, onSave }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>Nuevo Turno</h3>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Paciente:</label>

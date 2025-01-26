@@ -117,6 +117,7 @@ const TurnoList = () => {
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
           onSave={() => {
+            console.log('Turno guardado exitosamente'); // Debug
             setShowAddModal(false);
             fetchTurnos(); // Recargar la lista después de agregar
           }}

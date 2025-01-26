@@ -19,7 +19,7 @@ function DentistCard({ dentist, onDelete, onEdit }) {
       <div className="dentist-info">
         <p><strong>Matrícula:</strong> {dentist.matricula}</p>
         <p><strong>Email:</strong> {dentist.email}</p>
-        <p><strong>Email:</strong> {dentist.telefono}</p>
+        <p><strong>Telefono:</strong> {dentist.telefono}</p>
         <div className="card-actions">
           <button 
             className="btn-edit"
